@@ -1,4 +1,3 @@
-
 // app/api/forms/route.ts
 import { NextResponse } from 'next/server'
 import { createSupabaseServerClient } from '@/lib/supabase-server'
@@ -12,9 +11,25 @@ export async function POST(req: Request) {
 
   const { data, error } = await supabase
     .from('forms')
-    .insert([{ name, slug, webhook_url }])
+    .insert([{ name, slug, webhook_url, user_id: user.id }])
     .select()
     .single()
+
+  if (error) return NextResponse.json({ error: error.message }, { status: 400 })
+
+  return NextResponse.json(data)
+}
+
+export async function GET(req: Request) {
+  const supabase = createSupabaseServerClient()
+  const { data: { user }, error: authError } = await supabase.auth.getUser()
+  if (authError || !user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+  const { data, error } = await supabase
+    .from('forms')
+    .select('*')
+    .eq('user_id', user.id)
+    .order('created_at', { ascending: false })
 
   if (error) return NextResponse.json({ error: error.message }, { status: 400 })
 

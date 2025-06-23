@@ -1,9 +1,10 @@
-import { supabase } from '@/lib/supabase'
+import { createSupabaseServerClient } from '@/lib/supabase-server'
 import { NextResponse } from 'next/server'
 
 export async function POST(req: Request, { params }: { params: { form_id: string } }) {
   const { form_id } = params
   const body = await req.json()
+  const supabase = createSupabaseServerClient()
 
   // Allow submission by either UUID or slug
   const { data: form, error } = await supabase
