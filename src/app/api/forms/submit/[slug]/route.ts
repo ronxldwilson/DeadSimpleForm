@@ -7,10 +7,8 @@ export async function POST(req: Request, { params }: { params: { slug: string } 
   const { slug } = params
   let body: Record<String, any> = {};
 
-  const supabase = createSupabaseServerClient()
-
   const contentType = req.headers.get('content-type') || '';
-  if (contentType.include('application/json')) {
+  if (contentType.includes('application/json')) {
     body = await req.json();
   } else if (contentType.includes('application/x-www-form-urlencoded')){
     const formData = await req.formData();
