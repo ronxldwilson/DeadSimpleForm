@@ -12,10 +12,10 @@ export default function CreateForm() {
     setLoading(true)
     setError("")
     try {
-      const res = await fetch('/api/forms', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, slug, webhook_url: "" })
+      const res = await fetch("/api/forms", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, slug, webhook_url: "" }),
       })
       const result = await res.json()
       setLoading(false)
@@ -33,39 +33,50 @@ export default function CreateForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="w-full max-w-xl bg-white dark:bg-black border border-gray-200 dark:border-gray-800 rounded-lg p-4 flex flex-col gap-4 shadow">
-      <h2 className="text-lg font-semibold">Create New Form</h2>
+    <form
+      onSubmit={handleSubmit}
+      className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl p-6 shadow-md flex flex-col gap-5"
+    >
+      <h2 className="text-lg font-semibold text-black dark:text-white">Create New Form</h2>
+
       <div className="flex flex-col gap-1">
-        <label htmlFor="name" className="font-medium">Name</label>
+        <label htmlFor="name" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+          Form Name
+        </label>
         <input
           id="name"
           type="text"
           value={name}
-          onChange={e => setName(e.target.value)}
-          className="border rounded px-3 py-2"
+          onChange={(e) => setName(e.target.value)}
+          className="px-3 py-2 rounded-lg border border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-sm focus:outline-none focus:ring-2 focus:ring-black"
           required
         />
       </div>
+
       <div className="flex flex-col gap-1">
-        <label htmlFor="slug" className="font-medium">Slug</label>
+        <label htmlFor="slug" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+          Form Slug
+        </label>
         <input
           id="slug"
           type="text"
           value={slug}
-          onChange={e => setSlug(e.target.value)}
-          className="border rounded px-3 py-2"
+          onChange={(e) => setSlug(e.target.value)}
+          className="px-3 py-2 rounded-lg border border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-sm focus:outline-none focus:ring-2 focus:ring-black"
           required
         />
-        <span className="text-xs text-gray-500">URL: /api/forms/&lt;slug&gt;</span>
+        <p className="text-xs text-gray-500 dark:text-gray-400">URL: /api/forms/&lt;slug&gt;</p>
       </div>
-      {error && <div className="text-red-600 text-sm">{error}</div>}
+
+      {error && <p className="text-sm text-red-600">{error}</p>}
+
       <button
         type="submit"
-        className="bg-black text-white rounded px-4 py-2 font-semibold disabled:opacity-50"
         disabled={loading}
+        className="w-full sm:w-auto bg-black text-white py-2 px-4 rounded-lg text-sm font-semibold hover:bg-gray-900 disabled:opacity-50 transition"
       >
         {loading ? "Creating..." : "Create Form"}
       </button>
     </form>
   )
-} 
+}
