@@ -1,74 +1,165 @@
-import { createSupabaseServerClient } from '@/lib/supabase-server'
-import { notFound } from 'next/navigation'
-import { cookies } from 'next/headers'
+'use client'
 
-interface Props {
-  params: { slug: string }
-}
+import { useEffect, useState } from 'react'
+import { useParams, useRouter } from 'next/navigation'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import * as XLSX from 'xlsx'
 
-export default async function FormDetailPage({ params }: Props) {
-  const supabase = await createSupabaseServerClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+export default function FormDetailPage() {
+    const supabase = createClientComponentClient()
+    const params = useParams()
+    const router = useRouter()
 
-  if (!user) {
-    notFound()
-  }
+    const [form, setForm] = useState<any>(null)
+    const [submissions, setSubmissions] = useState<any[]>([])
+    const [loading, setLoading] = useState(true)
 
-  // Fetch form by slug and validate ownership
-  const { data: form } = await supabase
-    .from('forms')
-    .select('*')
-    .eq('slug', params.slug)
-    .eq('user_id', user.id)
-    .single()
+    useEffect(() => {
+        async function loadData() {
+            const {
+                data: { user },
+                error: userError
+            } = await supabase.auth.getUser()
 
-  if (!form) {
-    notFound()
-  }
+            if (!user || userError) {
+                router.push('/login')
+                return
+            }
 
-  // Fetch submissions for this form
-  const { data: submissions } = await supabase
-    .from('submissions')
-    .select('*')
-    .eq('form_id', form.id)
-    .order('created_at', { ascending: false })
+            const { data: formData, error: formError } = await supabase
+                .from('forms')
+                .select('*')
+                .eq('slug', params.slug)
+                .eq('user_id', user.id)
+                .single()
 
-  return (
-    <div className="min-h-screen bg-white dark:bg-black px-4 py-6 sm:px-6 md:px-8">
-      <div className="max-w-3xl mx-auto space-y-8">
-        <header>
-          <h1 className="text-2xl font-bold text-black dark:text-white">
-            {form.name}
-          </h1>
-          <p className="text-gray-500 dark:text-gray-400 text-sm">
-            Submissions for <code className="bg-gray-100 dark:bg-zinc-800 px-1 py-0.5 rounded">{form.slug}</code>
-          </p>
-        </header>
+            if (!formData || formError) {
+                router.push('/dashboard')
+                return
+            }
 
-        {submissions && submissions.length > 0 ? (
-          <ul className="space-y-4">
-            {submissions.map((submission: any) => (
-              <li
-                key={submission.id}
-                className="border border-gray-200 dark:border-zinc-800 rounded-lg p-4 bg-gray-50 dark:bg-zinc-900 text-sm"
-              >
-                <div className="text-xs text-gray-500 mb-2">
-                  {new Date(submission.created_at).toLocaleString()}
+            setForm(formData)
+
+            const { data: submissionData } = await supabase
+                .from('submissions')
+                .select('*')
+                .eq('form_id', formData.id)
+                .order('submitted_at', { ascending: false })
+
+            setSubmissions(submissionData || [])
+            setLoading(false)
+        }
+
+        loadData()
+    }, [params.slug])
+
+    function downloadJSON() {
+        const blob = new Blob([JSON.stringify(submissions, null, 2)], {
+            type: 'application/json'
+        })
+        const url = URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = `${form.slug}-submissions.json`
+        a.click()
+        URL.revokeObjectURL(url)
+    }
+
+    function downloadCSV() {
+        const flat = submissions.map((s) => ({
+            submitted_at: s.submitted_at,
+            // ip_address: s.ip_address,
+            // user_agent: s.user_agent,
+            ...s.data
+        }))
+        const header = Object.keys(flat[0] || {})
+        const rows = flat.map((row) =>
+            header.map((field) => `"${(row[field] ?? '').toString().replace(/"/g, '""')}"`).join(',')
+        )
+        const csv = [header.join(','), ...rows].join('\n')
+        const blob = new Blob([csv], { type: 'text/csv' })
+        const url = URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = `${form.slug}-submissions.csv`
+        a.click()
+        URL.revokeObjectURL(url)
+    }
+
+    function downloadExcel() {
+        const flat = submissions.map((s) => ({
+            submitted_at: s.submitted_at,
+            // ip_address: s.ip_address,
+            // user_agent: s.user_agent,
+            ...s.data
+        }))
+        const worksheet = XLSX.utils.json_to_sheet(flat)
+        const workbook = XLSX.utils.book_new()
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Submissions')
+        XLSX.writeFile(workbook, `${form.slug}-submissions.xlsx`)
+    }
+
+    if (loading) {
+        return <div className="p-6 text-gray-600">Loading...</div>
+    }
+
+    const headers = submissions?.[0]?.data ? Object.keys(submissions[0].data) : []
+
+    return (
+        <div className="min-h-screen text-black bg-white px-4 py-6 sm:px-6 md:px-8">
+            <div className="max-w-5xl mx-auto space-y-8">
+                <header>
+                    <h1 className="text-2xl font-bold text-black">{form.name}</h1>
+                    <p className="text-gray-600 text-sm">
+                        Submissions for <code className="bg-gray-100 px-1 py-0.5 rounded">{form.slug}</code>
+                    </p>
+                </header>
+
+                <div className="flex gap-3">
+                    <button onClick={downloadJSON} className="bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded text-sm font-medium">
+                        Download JSON
+                    </button>
+                    <button onClick={downloadCSV} className="bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded text-sm font-medium">
+                        Download CSV
+                    </button>
+                    <button onClick={downloadExcel} className="bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded text-sm font-medium">
+                        Download Excel
+                    </button>
                 </div>
-                <pre className="whitespace-pre-wrap break-words text-black dark:text-white">
-                  {JSON.stringify(submission.data, null, 2)}
-                </pre>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="text-gray-500 dark:text-gray-400 text-sm">
-            No submissions yet.
-          </p>
-        )}
-      </div>
-    </div>
-  )
+
+                {submissions.length > 0 ? (
+                    <div className="overflow-auto border rounded-lg">
+                        <table className="min-w-full text-sm text-left">
+                            <thead className="bg-gray-100 border-b">
+                                <tr>
+                                    {/* <th className="px-4 py-2">IP Address</th> */}
+                                    {/* <th className="px-4 py-2">User Agent</th> */}
+                                    {headers.map((key) => (
+                                        <th key={key} className="px-4 py-2 capitalize">{key}</th>
+                                    ))}
+                                    <th className="px-4 py-2">Submitted At</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {submissions.map((sub) => (
+                                    <tr key={sub.id} className="border-b hover:bg-gray-50">
+                                        {/* <td className="px-4 py-2">{sub.ip_address}</td> */}
+                                        {/* <td className="px-4 py-2 truncate max-w-[200px]">{sub.user_agent}</td> */}
+                                        {headers.map((key) => (
+                                            <td key={key} className="px-4 py-2 whitespace-pre-wrap break-words">
+                                                {String(sub.data[key])}
+                                            </td>
+                                        ))}
+                                        <td className="px-4 py-2">{new Date(sub.submitted_at).toLocaleString()}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                ) : (
+                    <p className="text-gray-500 text-sm">No submissions yet.</p>
+                )}
+            </div>
+        </div>
+    )
 }
