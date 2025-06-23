@@ -180,13 +180,3 @@ Returns all submissions for a given form owned by the logged-in user.
 | 404  | Form Not Found       |
 | 406  | Not Acceptable (RLS) |
 
----
-
-Let me know if you'd like to:
-
-* Add Webhook Delivery Retry docs
-* Add example frontend HTML integration
-* Format it for a `README.md` or Swagger spec
-
-Want to publish this on a `/docs` route too?
-
