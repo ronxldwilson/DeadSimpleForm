@@ -1,11 +1,25 @@
+// app/api/forms/submit/[slug]/route.ts
 import { NextResponse } from 'next/server'
 import { createSupabaseServerClient } from '@/lib/supabase-server'
 
 export async function POST(req: Request, { params }: { params: { slug: string } }) {
+  const supabase = createSupabaseServerClient();
   const { slug } = params
-  const body = await req.json()
+  let body: Record<String, any> = {};
 
   const supabase = createSupabaseServerClient()
+
+  const contentType = req.headers.get('content-type') || '';
+  if (contentType.include('application/json')) {
+    body = await req.json();
+  } else if (contentType.includes('application/x-www-form-urlencoded')){
+    const formData = await req.formData();
+    formData.forEach((value, key) => {
+      body[key] = value;
+    });
+  } else {
+    return NextResponse.json({ error: 'Unsupported content type' }, { status: 400});
+  }
 
   // Look up the form by slug
   const { data: form, error: formError } = await supabase
