@@ -1,22 +1,24 @@
 // app/api/forms/submit/[slug]/route.ts
 import { NextResponse } from 'next/server'
 import { createSupabaseServerClient } from '@/lib/supabase-server'
+import type { NextRequest } from 'next/server'
 
-export async function POST(req: Request, { params }: { params: { slug: string } }) {
-  const supabase = createSupabaseServerClient();
-  const { slug } = params
-  let body: Record<String, any> = {};
+export async function POST(req: NextRequest, context: { params: Promise<{ slug: string }> }) {
+  const { slug } = await context.params;
+  const supabase = await createSupabaseServerClient()
+  
+  let body: Record<string, any> = {}
 
-  const contentType = req.headers.get('content-type') || '';
+  const contentType = req.headers.get('content-type') || ''
   if (contentType.includes('application/json')) {
-    body = await req.json();
-  } else if (contentType.includes('application/x-www-form-urlencoded')){
-    const formData = await req.formData();
+    body = await req.json()
+  } else if (contentType.includes('application/x-www-form-urlencoded')) {
+    const formData = await req.formData()
     formData.forEach((value, key) => {
-      body[key] = value;
-    });
+      body[key] = value
+    })
   } else {
-    return NextResponse.json({ error: 'Unsupported content type' }, { status: 400});
+    return NextResponse.json({ error: 'Unsupported content type' }, { status: 400 })
   }
 
   // Look up the form by slug
@@ -39,7 +41,7 @@ export async function POST(req: Request, { params }: { params: { slug: string } 
     return NextResponse.json({ error: insertError.message }, { status: 400 })
   }
 
-  // (Optional) Fire webhook if set
+  // Fire webhook (optional)
   if (form.webhook_url) {
     try {
       await fetch(form.webhook_url, {
@@ -49,7 +51,6 @@ export async function POST(req: Request, { params }: { params: { slug: string } 
       })
     } catch (err) {
       console.warn('Webhook failed:', err)
-      // you can queue a retry later if needed
     }
   }
 

@@ -2,11 +2,14 @@
 
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
-import * as XLSX from 'xlsx'
+import { createBrowserClient } from '@supabase/ssr'
+// import * as XLSX from 'xlsx'
 
 export default function FormDetailPage() {
-    const supabase = createClientComponentClient()
+    const supabase = createBrowserClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    )
     const params = useParams()
     const router = useRouter()
 
@@ -86,18 +89,18 @@ export default function FormDetailPage() {
         URL.revokeObjectURL(url)
     }
 
-    function downloadExcel() {
-        const flat = submissions.map((s) => ({
-            submitted_at: s.submitted_at,
-            // ip_address: s.ip_address,
-            // user_agent: s.user_agent,
-            ...s.data
-        }))
-        const worksheet = XLSX.utils.json_to_sheet(flat)
-        const workbook = XLSX.utils.book_new()
-        XLSX.utils.book_append_sheet(workbook, worksheet, 'Submissions')
-        XLSX.writeFile(workbook, `${form.slug}-submissions.xlsx`)
-    }
+    // function downloadExcel() {
+    //     const flat = submissions.map((s) => ({
+    //         submitted_at: s.submitted_at,
+    //         // ip_address: s.ip_address,
+    //         // user_agent: s.user_agent,
+    //         ...s.data
+    //     }))
+    //     const worksheet = XLSX.utils.json_to_sheet(flat)
+    //     const workbook = XLSX.utils.book_new()
+    //     XLSX.utils.book_append_sheet(workbook, worksheet, 'Submissions')
+    //     XLSX.writeFile(workbook, `${form.slug}-submissions.xlsx`)
+    // }
 
     if (loading) {
         return <div className="p-6 text-gray-600">Loading...</div>
@@ -122,9 +125,9 @@ export default function FormDetailPage() {
                     <button onClick={downloadCSV} className="bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded text-sm font-medium">
                         Download CSV
                     </button>
-                    <button onClick={downloadExcel} className="bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded text-sm font-medium">
+                    {/* <button onClick={downloadExcel} className="bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded text-sm font-medium">
                         Download Excel
-                    </button>
+                    </button> */}
                 </div>
 
                 {submissions.length > 0 ? (

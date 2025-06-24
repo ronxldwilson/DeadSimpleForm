@@ -2,10 +2,13 @@
 
 import { Auth } from '@supabase/auth-ui-react'
 import { ThemeSupa } from '@supabase/auth-ui-shared'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createBrowserClient } from '@supabase/ssr'
 
 export default function LoginPage() {
-  const supabase = createClientComponentClient()
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-white px-4">
@@ -26,7 +29,7 @@ export default function LoginPage() {
         />
 
         <p className="text-xs text-gray-400 text-center mt-6">
-          Don’t have an account yet? Sign up — it’s completely free.
+          Don`&apos;t have an account yet? Sign up — it&apos;s completely free.
         </p>
       </div>
     </div>
