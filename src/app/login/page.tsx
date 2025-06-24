@@ -29,7 +29,7 @@ export default function LoginPage() {
         />
 
         <p className="text-xs text-gray-400 text-center mt-6">
-          Don`&apos;t have an account yet? Sign up — it&apos;s completely free.
+          Don&apos;t have an account yet? Sign up — it&apos;s completely free.
         </p>
       </div>
     </div>

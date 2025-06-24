@@ -1,111 +1,92 @@
+'use client'
 
-import Link from 'next/link';
+import { useState } from 'react'
+import { supabase } from '@/lib/supabase'
 
 export default function LandingPage() {
+  const [email, setEmail] = useState('')
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error' | 'duplicate'>('idle')
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setStatus('loading')
+
+    const { error } = await supabase.from('waitlist').insert({ email })
+
+    if (error) {
+      console.error(error)
+      if (error.code === '23505') {
+        // Unique constraint violation
+        setStatus('duplicate')
+      } else {
+        setStatus('error')
+      }
+    } else {
+      setStatus('success')
+      setEmail('')
+    }
+  }
+
   return (
-    <main className="min-h-screen bg-white text-black p-6 md:p-12">
-      {/* Hero Section */}
-      <section className="text-center max-w-4xl mx-auto mb-16">
-        <h1 className="text-4xl md:text-6xl font-bold mb-6">
-          Dead Simple Form Backend
+    <main className="min-h-screen flex flex-col items-center justify-center px-4 bg-gradient-to-b from-white to-slate-100 text-gray-900 font-sans">
+      <div className="max-w-3xl text-center py-20">
+        <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight leading-tight mb-4">
+          Dead Simple Form
         </h1>
-        <p className="text-lg md:text-xl text-gray-600 mb-8">
-          Submit forms without writing any backend code. Just drop in an action URL.
+        <p className="text-xl text-gray-600 mb-10">
+          Create forms without the headache of a backend. <br className="hidden md:block" />
+          Join the early access waitlist today.
         </p>
-        <Link
-          href="/dashboard"
-          className="bg-black text-white px-6 py-3 rounded-xl text-lg hover:bg-gray-900 transition"
-        >
-          Get Started
-        </Link>
-      </section>
 
-      {/* How It Works */}
-      <section className="max-w-3xl mx-auto mb-20">
-        <h2 className="text-2xl font-semibold mb-4">How It Works</h2>
-        <ol className="space-y-4 text-gray-800 list-decimal list-inside">
-          <li>
-            <strong>Create a form</strong> – Log in and create a new form slug.
-          </li>
-          <li>
-            <strong>Copy your endpoint</strong> – e.g. <code className="bg-gray-100 px-2 py-1 rounded">https://dead-simple-form.vercel.app/api/forms/submit/contact-form</code>
-          </li>
-          <li>
-            <strong>Paste in your HTML</strong> – Add it directly to your site:
-            <pre className="bg-gray-100 p-4 mt-2 rounded text-sm overflow-auto">
-{`<form action="https://dead-simple-form.vercel.app/api/forms/submit/contact-form" method="POST">
-  <input name="email" type="email" required />
-  <textarea name="message" required></textarea>
-  <button type="submit">Send</button>
-</form>`}
-            </pre>
-          </li>
-        </ol>
-      </section>
-
-      {/* Live Demo */}
-      <section className="max-w-3xl mx-auto mb-20">
-        <h2 className="text-2xl font-semibold mb-4">Try It Now</h2>
-        <form
-          action="/api/forms/submit/public-form-test"
-          method="POST"
-          className="space-y-4"
-        >
+        <form onSubmit={handleSubmit} className="w-full max-w-lg mx-auto flex flex-col sm:flex-row gap-3 sm:gap-2">
           <input
-            name="email"
             type="email"
             required
-            placeholder="Your email"
-            className="w-full p-3 border rounded-md"
-          />
-          <textarea
-            name="message"
-            required
-            placeholder="Your message"
-            className="w-full p-3 border rounded-md"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            placeholder="you@example.com"
+            className="flex-1 px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
           />
           <button
             type="submit"
-            className="bg-black text-white px-6 py-3 rounded-md hover:bg-gray-900"
+            disabled={status === 'loading'}
+            className="px-6 py-3 rounded-xl bg-black text-white font-semibold hover:bg-gray-900 transition disabled:opacity-50"
           >
-            Send Message
+            {status === 'loading' ? 'Joining...' : 'Join Waitlist'}
           </button>
         </form>
-      </section>
 
-      {/* Features */}
-      <section className="max-w-4xl mx-auto mb-16">
-        <h2 className="text-2xl font-semibold mb-6 text-center">Why Use DeadSimpleForm?</h2>
-        <div className="grid md:grid-cols-2 gap-6">
-          <div className="p-4 border rounded-xl">
-            <h3 className="font-bold">No Backend Required</h3>
-            <p className="text-gray-700">Just use our endpoint and we’ll handle the storage.</p>
-          </div>
-          <div className="p-4 border rounded-xl">
-            <h3 className="font-bold">Works with Any HTML</h3>
-            <p className="text-gray-700">Fully frontend-compatible. Just drop and go.</p>
-          </div>
-          <div className="p-4 border rounded-xl">
-            <h3 className="font-bold">Webhook Support</h3>
-            <p className="text-gray-700">(Coming soon) Automatically send submissions to your app.</p>
-          </div>
-          <div className="p-4 border rounded-xl">
-            <h3 className="font-bold">Simple JSON Dashboard</h3>
-            <p className="text-gray-700">View and export your submissions at any time.</p>
-          </div>
+        {status === 'success' && (
+          <p className="mt-4 text-green-600">You&apos;re on the list! 🎉</p>
+        )}
+        {status === 'duplicate' && (
+          <p className="mt-4 text-green-600">You&apos;re already on the waitlist ✅</p>
+        )}
+        {status === 'error' && (
+          <p className="mt-4 text-red-600">Something went wrong. Try again.</p>
+        )}
+
+        {/* Quick How-It-Works section */}
+        <div className="mt-12 text-left space-y-6">
+          <h2 className="text-2xl font-semibold text-gray-800">How it works</h2>
+          <ul className="space-y-2 text-gray-700 text-base">
+            <li>✅ Make a form on your website, just like you normally would</li>
+            <li>🔗 Copy a special link from us and paste it into your form</li>
+            <li>📬 When someone fills it out, we save the response for you</li>
+            <li>📊 View submissions, download them, or get notified — your choice</li>
+
+          </ul>
+
+          <h2 className="text-2xl font-semibold mt-8 text-gray-800">Why it matters</h2>
+          <ul className="space-y-2 text-gray-700 text-base">
+            <li>⏱ No time wasted setting up servers or writing backend code</li>
+            <li>🛠 Works with plain HTML — no frameworks or JavaScript needed</li>
+            <li>🧪 Great for contact forms, landing pages, or quick projects</li>
+            <li>🧘 You just build the frontend — we&apos;ll handle the boring stuff</li>
+          </ul>
         </div>
-      </section>
 
-      {/* Docs Link */}
-      <section className="text-center">
-        <p className="text-gray-600">Looking for more advanced usage?</p>
-        <Link
-          href="/docs"
-          className="text-blue-600 hover:underline"
-        >
-          Read the full API documentation →
-        </Link>
-      </section>
+      </div>
     </main>
-  );
+  )
 }
