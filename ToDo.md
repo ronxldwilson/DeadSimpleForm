@@ -11,7 +11,7 @@
 
 form managment 
 - make sure that when the user deletes their account, their data gets deleted as well
-- user can delete a form
+- user can delete a form which is owned by them
     - after user has deleted a form, the respective data should get deleted
 - edit form metadata, name of the form
 
@@ -71,6 +71,9 @@ ai
 - give the topic, the ai uses the custom form id and creates the form in the language as per the specs
 - mcp?
 
+Testing
+- Test various form use case scenarios
+- automate testing?
 
 
 
@@ -83,3 +86,5 @@ ai
 - make form slug auto generated when creating a new form
 - copy button for form endpoint url
 - Add Header
+
+- Improve api documentation

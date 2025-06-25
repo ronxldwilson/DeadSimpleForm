@@ -1,4 +1,11 @@
 // app/api/forms/submit/[slug]/route.ts
+
+// This API route accepts public form submissions to a specific form identified by its slug.
+// It supports both JSON (`application/json`) and URL-encoded (`application/x-www-form-urlencoded`) content types.
+// The request body is parsed and saved in the 'submissions' table with a reference to the form's ID.
+// If the form has a `webhook_url` configured, the submitted data is also forwarded to that URL via POST request.
+// Returns a success response if the submission is stored (and webhook optionally fired), or an error otherwise.
+
 import { NextResponse } from 'next/server'
 import { createSupabaseServerClient } from '@/lib/supabase-server'
 import type { NextRequest } from 'next/server'

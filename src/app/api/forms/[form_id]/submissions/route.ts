@@ -1,4 +1,10 @@
 // app/api/forms/[form_id]/submissions/route.ts
+
+// This API route handles fetching all submissions for a given form.
+// It authenticates the user using Supabase Auth and retrieves all submissions
+// from the 'submissions' table that match the provided `form_id`, sorted by `submitted_at` in descending order.
+// Only authenticated users are allowed to access this endpoint.
+
 import { NextResponse } from 'next/server'
 import { createSupabaseServerClient } from '@/lib/supabase-server'
 import { NextRequest } from 'next/server'

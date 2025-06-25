@@ -1,3 +1,16 @@
+// app/api/forms/route.ts
+
+// This API route handles form creation and retrieval for authenticated users.
+//
+// POST: Creates a new form with a unique slug (`form_<random_id>`), associating it with the logged-in user.
+//        Accepts `name` (required) and optional `webhook_url` in the request body.
+//        Ensures the generated slug is unique by checking against existing slugs in the database.
+//        Returns the newly created form or an error if creation fails.
+//
+// GET: Fetches all forms belonging to the authenticated user, ordered by creation time (newest first).
+//      Returns the list of forms or an error if the query fails.
+
+
 import { NextRequest, NextResponse } from "next/server";
 import { createSupabaseServerClient } from "@/lib/supabase-server";
 import { nanoid } from "nanoid";
