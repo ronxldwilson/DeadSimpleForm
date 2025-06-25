@@ -1,11 +1,11 @@
 // app/pricing/page.tsx
 import Header from "@/components/Header";
-
+import Link from "next/link";
 export default function PricingPage() {
     return (
         <>
             <Header />
-            <div className="text-black bg-white">
+            <div className="text-black bg-white min-h-screen">
                 <main className="max-w-6xl mx-auto px-4 py-16">
                     <h1 className="text-4xl font-bold text-center mb-6">Pricing</h1>
                     <p className="text-center text-gray-600 mb-12">
@@ -47,9 +47,11 @@ export default function PricingPage() {
                                 <li>Submission export (CSV)</li>
                                 <li>Custom branding</li>
                             </ul>
-                            <button className="w-full bg-blue-600 text-white rounded-md py-2 hover:bg-blue-700 transition">
-                                Start Pro Trial
-                            </button>
+                            <Link href="/checkout?plan=pro">
+                                <button className="w-full bg-blue-600 text-white rounded-md py-2 hover:bg-blue-700 transition">
+                                    Start Pro Trial
+                                </button>
+                            </Link>
                         </div>
 
                         {/* Enterprise Plan */}

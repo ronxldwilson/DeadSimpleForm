@@ -1,6 +1,6 @@
 # Priority 0
+- setup backend for pricing page
 - Logout Funcitonality 
-- fix header buttons and functionality
 
 # To Do
 - Payment processor - application submitted
@@ -9,9 +9,11 @@
 - Handle redirect post form submission via public api endpoint
 - Make the my form section auto update after the new form has been created
 - pricing page to link to checkout to start membership 
-- setup backend for pricing page
 - setup differnet features based on the user tiers
 
+- finalize docs page
+- finalize features page
+- finalize pricing page
 
 form managment 
 - make sure that when the user deletes their account, their data gets deleted as well
@@ -95,3 +97,4 @@ Testing
 - add docs page
 - add features page
 - add pricing page
+- fix header buttons and functionality
