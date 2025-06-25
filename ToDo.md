@@ -8,6 +8,10 @@
 - fix the login/signup page theme and text font
 - Handle redirect post form submission via public api endpoint
 - Make the my form section auto update after the new form has been created
+- pricing page to link to checkout to start membership 
+- setup backend for pricing page
+- setup differnet features based on the user tiers
+
 
 form managment 
 - make sure that when the user deletes their account, their data gets deleted as well
@@ -88,3 +92,6 @@ Testing
 - Add Header
 
 - Improve api documentation
+- add docs page
+- add features page
+- add pricing page
