@@ -68,7 +68,7 @@ ux
 
 ai 
 - give the topic, the ai uses the custom form id and creates the form in the language as per the specs
-
+- mcp?
 
 
 

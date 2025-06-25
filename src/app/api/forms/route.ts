@@ -1,38 +1,68 @@
-// app/api/forms/route.ts
-import { NextResponse } from 'next/server'
-import { createSupabaseServerClient } from '@/lib/supabase-server'
-import { NextRequest } from 'next/server'
+import { NextRequest, NextResponse } from "next/server";
+import { createSupabaseServerClient } from "@/lib/supabase-server";
+import { nanoid } from "nanoid";
 
+// POST: Create a new form with unique slug
 export async function POST(req: NextRequest) {
-  const supabase = await createSupabaseServerClient()
-  const { name, slug, webhook_url } = await req.json()
+  const supabase = await createSupabaseServerClient();
 
-  const { data: { user }, error: authError } = await supabase.auth.getUser()
-  if (authError || !user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  // Get user
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  if (authError || !user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
-  const { data, error } = await supabase
-    .from('forms')
+  // Parse request body
+  const { name, webhook_url = "" } = await req.json();
+  if (!name) {
+    return NextResponse.json({ error: "Name is required" }, { status: 400 });
+  }
+
+  // Generate a unique slug
+  let slug = `form_${nanoid(8)}`;
+  let isUnique = false;
+
+  while (!isUnique) {
+    const { data } = await supabase.from("forms").select("id").eq("slug", slug).single();
+    if (!data) {
+      isUnique = true;
+    } else {
+      slug = `form_${nanoid(8)}`;
+    }
+  }
+
+  // Insert form
+  const { data: form, error } = await supabase
+    .from("forms")
     .insert([{ name, slug, webhook_url, user_id: user.id }])
     .select()
-    .single()
+    .single();
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 400 })
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
 
-  return NextResponse.json(data)
+  return NextResponse.json({ form }, { status: 200 });
 }
 
+// GET: Return all forms for the logged-in user
 export async function GET(req: NextRequest) {
-  const supabase = await createSupabaseServerClient()
-  const { data: { user }, error: authError } = await supabase.auth.getUser()
-  if (authError || !user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  const supabase = await createSupabaseServerClient();
+
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  if (authError || !user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
   const { data, error } = await supabase
-    .from('forms')
-    .select('*')
-    .eq('user_id', user.id)
-    .order('created_at', { ascending: false })
+    .from("forms")
+    .select("*")
+    .eq("user_id", user.id)
+    .order("created_at", { ascending: false });
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 400 })
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 400 });
+  }
 
-  return NextResponse.json(data)
+  return NextResponse.json(data);
 }
