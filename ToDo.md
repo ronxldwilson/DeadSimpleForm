@@ -1,10 +1,9 @@
 # Priority 0
-- copy button for form endpoint url
+- Logout Funcitonality 
+- fix header buttons and functionality
 
 # To Do
 - Payment processor - application submitted
-- Logout Funcitonality 
-- Add Header
 - Enable server level encryption
 - fix the login/signup page theme and text font
 - Handle redirect post form submission via public api endpoint
@@ -82,3 +81,5 @@ ai
 - Add DNS to vercel
 - Create Waitlist for the product and landing page
 - make form slug auto generated when creating a new form
+- copy button for form endpoint url
+- Add Header
