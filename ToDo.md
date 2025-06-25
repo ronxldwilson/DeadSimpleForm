@@ -1,18 +1,20 @@
+# Priority 0
+- copy button for form endpoint url
+
 # To Do
 - Payment processor - application submitted
 - Logout Funcitonality 
 - Add Header
 - Enable server level encryption
 - fix the login/signup page theme and text font
-- make form slug auto generated when creating a new form
 - Handle redirect post form submission via public api endpoint
+- Make the my form section auto update after the new form has been created
 
 form managment 
 - make sure that when the user deletes their account, their data gets deleted as well
 - user can delete a form
     - after user has deleted a form, the respective data should get deleted
 - edit form metadata, name of the form
-- copy button for form endpoint url
 
 web hooks
 - test out current webhooks implementation
@@ -79,3 +81,4 @@ ai
 - Fix Supabase Auth Helper Dependency - Done
 - Add DNS to vercel
 - Create Waitlist for the product and landing page
+- make form slug auto generated when creating a new form
