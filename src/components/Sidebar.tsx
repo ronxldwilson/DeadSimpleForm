@@ -10,6 +10,7 @@ import {
   LogOut,
 } from "lucide-react";
 import { useState } from "react";
+import { useLogout } from '@/utils/useLogout'
 
 const navLinks = [
   {
@@ -33,6 +34,7 @@ export default function Sidebar() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
+  const logout = useLogout();
   return (
     <>
       {/* Hamburger always visible at top left, but hidden when menu is open */}
@@ -80,17 +82,17 @@ export default function Sidebar() {
                 );
               })}
             </nav>
-            <form action="/logout" method="post" className="mt-auto mb-4 px-2">
-              <button
-                type="submit"
-                className="flex items-center w-full gap-3 px-4 py-2 rounded-lg transition-colors text-sm font-medium text-zinc-400 hover:text-red-400 hover:bg-zinc-800"
-              >
-                <span className="flex-shrink-0 flex items-center justify-center">
-                  <LogOut size={20} />
-                </span>
-                <span>Logout</span>
-              </button>
-            </form>
+            <button
+              type="button"
+              onClick={logout}
+              className="flex items-center w-full gap-3 px-4 py-2 rounded-lg transition-colors text-sm font-medium text-zinc-400 hover:text-red-400 hover:bg-zinc-800"
+            >
+              <span className="flex-shrink-0 flex items-center justify-center">
+                <LogOut size={20} />
+              </span>
+              <span>Logout</span>
+            </button>
+
           </aside>
         </div>
       )}
