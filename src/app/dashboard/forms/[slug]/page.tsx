@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import createSupabaseBrowserClient from '@/lib/supabase-browser'
+import Sidebar from '@/components/Sidebar'
 // import * XLSX from 'xlsx'
 
 export default function FormDetailPage() {
@@ -71,7 +72,6 @@ export default function FormDetailPage() {
             setForm(formData);
         }
 
-        // Use existing form data for submissions query
         const formId = form?.id;
         if (!formId) {
             setLoading(false);
@@ -79,36 +79,34 @@ export default function FormDetailPage() {
         }
 
         const currentPage = reset ? 0 : page;
-        const submissionQuery = supabase
-            .from("submissions")
-            .select("*")
-            .eq("form_id", formId)
-            .order("submitted_at", { ascending: sortOrder === "asc" })
-            .range(currentPage * PAGE_SIZE, (currentPage + 1) * PAGE_SIZE - 1);
 
-        if (searchTerm.trim()) {
-            // naive search only in stringified `data` field
-            submissionQuery.ilike("data::text", `%${searchTerm.trim()}%`);
-        }
+        try {
+            const res = await fetch(`/api/forms/${formId}/submissions`);
+            if (!res.ok) throw new Error('Failed to fetch decrypted submissions');
+            const decrypted = await res.json();
 
-        const { data: submissionData, error } = await submissionQuery;
+            // client-side search
+            const filtered = searchTerm.trim()
+                ? decrypted.filter((s: any) =>
+                    JSON.stringify(s.data).toLowerCase().includes(searchTerm.toLowerCase())
+                )
+                : decrypted;
 
-        if (error) {
-            console.error(error);
+            if (reset) {
+                setSubmissions(filtered);
+                setPage(0);
+            } else {
+                setSubmissions((prev) => [...prev, ...filtered]);
+            }
+
+            setHasMore(filtered.length === PAGE_SIZE);
+        } catch (err) {
+            console.error('Submissions load error:', err);
+        } finally {
             setLoading(false);
-            return;
         }
+    }, [supabase, router, params.slug, form, page, searchTerm, PAGE_SIZE]);
 
-        if (reset) {
-            setSubmissions(submissionData || []);
-            setPage(0);
-        } else {
-            setSubmissions((prev) => [...prev, ...(submissionData || [])]);
-        }
-
-        setHasMore((submissionData || []).length === PAGE_SIZE);
-        setLoading(false);
-    }, [supabase, router, params.slug, form, page, sortOrder, searchTerm, PAGE_SIZE]);
 
     // Initial load
     useEffect(() => {
@@ -200,7 +198,8 @@ export default function FormDetailPage() {
     const headers = submissions?.[0]?.data ? Object.keys(submissions[0].data) : []
 
     return (
-        <div className="min-h-screen text-black bg-white px-4 py-6 sm:px-6 md:px-8">
+        <div className="min-h-screen text-black bg-white px-4 py-20 sm:px-6 md:px-8">
+            <Sidebar />
             <div className="max-w-5xl mx-auto space-y-8">
                 <header>
                     <h1 className="text-2xl font-bold text-black">{form.name}</h1>

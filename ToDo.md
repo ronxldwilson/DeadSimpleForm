@@ -1,16 +1,13 @@
 # Priority 0
+- search through submissions 
 - setup backend for pricing page
 
-- search through submissions 
-
 # To Do
-- Payment processor - application submitted
-- Enable server level encryption
+- Payment processor - application submitted - need to complete the site to get api keys
 - fix the login/signup page theme and text font
 - Handle redirect post form submission via public api endpoint
 - pricing page to link to checkout to start membership 
 - setup differnet features based on the user tiers
-
 - finalize docs page
 - finalize features page
 - finalize pricing page
@@ -37,7 +34,6 @@ customization
 - form expiration date
 - Hidden fields support
 - Honeypot spam field 
-
 
 form logic and automatio
 - Form Logic & Automation
@@ -74,7 +70,6 @@ Testing
 - automate testing?
 
 # Done
-
 - Remove the XLSX module - Done
 - Fix Supabase Auth Helper Dependency - Done
 - Add DNS to vercel
@@ -82,7 +77,6 @@ Testing
 - make form slug auto generated when creating a new form
 - copy button for form endpoint url
 - Add Header
-
 - Improve api documentation
 - add docs page
 - add features page
@@ -100,3 +94,4 @@ Testing
 - delete individual submissions by the owner of the form
 - bulk delete submissions
 - pagination of infinte scroll for submissions
+- Enable server level encryption
