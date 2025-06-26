@@ -4,6 +4,7 @@
 - make sure that when the user deletes their account, their data gets deleted as well
 - edit form metadata, name of the form
 - setup backend for pricing page
+-fix sign in issue when signing in with 
 
 # To Do
 - Payment processor - application submitted

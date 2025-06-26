@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { createBrowserClient } from "@supabase/ssr";
+import createSupabaseBrowserClient from "@/lib/supabase-browser";
 import CopyButton from "@/components/CopyButton";
 import Link from "next/link";
 import { RefreshCcw } from "lucide-react";
@@ -11,10 +11,7 @@ export default function FormList({ userId }: { userId: string }) {
     const [loading, setLoading] = useState(false);
     const lastFetchedAt = useRef<number | null>(null);
 
-    const supabase = createBrowserClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    );
+    const supabase = createSupabaseBrowserClient();
 
     const fetchForms = async () => {
         const now = Date.now();
