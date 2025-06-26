@@ -180,3 +180,150 @@ Returns all submissions for a given form owned by the logged-in user.
 | 404  | Form Not Found       |
 | 406  | Not Acceptable (RLS) |
 
+# 🔐 Encrypted Form Submissions — Documentation
+
+DeadSimpleForm ensures that all form submissions are encrypted before being stored in the database. Only authenticated users with access to the form can view decrypted data.
+
+---
+
+## 💡 Overview
+
+* Submitted data is **encrypted on the server** using symmetric AES encryption.
+* Data is **decrypted on the server** when accessed via a secure, authenticated API.
+* The frontend **never stores** the encryption key — it only receives already decrypted data.
+* Supports multiple content types: `application/json` and `application/x-www-form-urlencoded`.
+* Optional: Data can also be **forwarded to a webhook** in plaintext.
+
+---
+
+## 📥 Submission Endpoint
+
+### `POST /api/forms/submit/[slug]`
+
+Used by **public users** to submit form data.
+
+#### Request
+
+* **Path Parameter**: `slug` – Unique form identifier (e.g. `contact-form`)
+* **Body (one of)**:
+
+  * `application/json`
+
+    ```json
+    {
+      "name": "Alice",
+      "email": "alice@example.com"
+    }
+    ```
+  * `application/x-www-form-urlencoded`
+
+    ```
+    name=Alice&email=alice@example.com
+    ```
+
+#### Behavior
+
+* Looks up the form by `slug`.
+* Encrypts the request body using `FORM_ENCRYPTION_SECRET` from env.
+* Stores encrypted data along with IP address and user-agent in the `submissions` table.
+* If the form has a `webhook_url`, forwards the **unencrypted** submission to that URL via `POST`.
+
+#### Success Response
+
+```json
+{
+  "success": true
+}
+```
+
+---
+
+## 🔓 Fetching Submissions
+
+### `GET /api/forms/[form_id]/submissions`
+
+Used by **authenticated form owners** to view decrypted submissions.
+
+#### Request
+
+* **Path Parameter**: `form_id` – UUID of the form
+
+#### Behavior
+
+* Authenticates the user via Supabase Auth.
+* Verifies the form belongs to the user.
+* Fetches encrypted submissions from the database.
+* Decrypts each record using the server-side encryption key.
+* Returns fully decrypted data in JSON format.
+
+#### Success Response
+
+```json
+[
+  {
+    "id": "uuid",
+    "form_id": "uuid",
+    "submitted_at": "2024-06-27T12:00:00Z",
+    "data": {
+      "name": "Alice",
+      "email": "alice@example.com"
+    },
+    "ip_address": "203.0.113.1",
+    "user_agent": "Mozilla/5.0 ..."
+  },
+  ...
+]
+```
+
+---
+
+## 🔐 Encryption Details
+
+* Algorithm: AES-256-GCM
+* Key: Loaded from `process.env.FORM_ENCRYPTION_SECRET`
+* IV: Randomly generated per message
+* Tag: GCM tag appended to ciphertext
+* Output format: Base64-encoded JSON `{ iv, tag, data }`
+
+**Example stored `data` field**:
+
+```json
+{
+  "iv": "A1B2C3D4E5F6...",
+  "tag": "1A2B3C4D...",
+  "data": "U2FsdGVkX1+..."
+}
+```
+
+---
+
+## 📦 Client-Side Usage
+
+* Client (dashboard) uses:
+
+  ```ts
+  fetch(`/api/forms/${formId}/submissions`)
+  ```
+* No decryption logic on client. All data received is already decrypted.
+
+---
+
+## 📄 Environment Variable
+
+Make sure the following is set in `.env` or hosting environment:
+
+```env
+FORM_ENCRYPTION_SECRET=your-32-byte-long-secret-key
+```
+
+Length must be exactly **32 bytes** for AES-256.
+
+---
+
+## 🚨 Security Notes
+
+* The encryption key is **never exposed to users**.
+* Only form owners can access decrypted data.
+* If the key is changed, previously encrypted data **cannot be decrypted**.
+* Avoid logging raw encrypted data or keys.
+
