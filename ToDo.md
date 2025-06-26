@@ -1,9 +1,7 @@
 # Priority 0
-- user can delete a form which is owned by them
-    - after user has deleted a form, the respective data should get deleted
 - make sure that when the user deletes their account, their data gets deleted as well
-- edit form metadata, name of the form
 - setup backend for pricing page
+
 
 # To Do
 - Payment processor - application submitted
@@ -80,8 +78,6 @@ Testing
 - Test various form use case scenarios
 - automate testing?
 
-
-
 # Done
 
 - Remove the XLSX module - Done
@@ -101,3 +97,6 @@ Testing
 - Sidebar for dashboard
 - Logout functionality (frontend + invalidate Supabase session) 
 - fix sign in issue when signing in for the second time
+- user can delete a form which is owned by them
+    - after user has deleted a form, the respective data should get deleted
+- edit form metadata, name of the form
