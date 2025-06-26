@@ -69,7 +69,7 @@ export default function CreateForm() {
 
       {successSlug && (
         <div className="mt-4 p-4 bg-green-50 dark:bg-green-900 border border-green-300 dark:border-green-700 text-sm rounded-lg text-green-800 dark:text-green-200">
-          ✅ Form <strong>{name}</strong> created successfully!<br />
+          ✅ Form created successfully!<br />
           📄 <span className="font-mono">Form ID: {successSlug}</span>
         </div>
       )}

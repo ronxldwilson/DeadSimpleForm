@@ -1,13 +1,12 @@
 # Priority 0
 - setup backend for pricing page
-- Logout Funcitonality 
+- Logout functionality (frontend + invalidate Supabase session) 
 
 # To Do
 - Payment processor - application submitted
 - Enable server level encryption
 - fix the login/signup page theme and text font
 - Handle redirect post form submission via public api endpoint
-- Make the my form section auto update after the new form has been created
 - pricing page to link to checkout to start membership 
 - setup differnet features based on the user tiers
 
@@ -98,3 +97,4 @@ Testing
 - add features page
 - add pricing page
 - fix header buttons and functionality
+- Make the my form section auto update after the new form has been created
