@@ -1,4 +1,6 @@
 # Priority 0
+- user can delete a form which is owned by them
+    - after user has deleted a form, the respective data should get deleted
 - setup backend for pricing page
 - Logout functionality (frontend + invalidate Supabase session) 
 
@@ -16,8 +18,6 @@
 
 form managment 
 - make sure that when the user deletes their account, their data gets deleted as well
-- user can delete a form which is owned by them
-    - after user has deleted a form, the respective data should get deleted
 - edit form metadata, name of the form
 
 web hooks
@@ -98,3 +98,4 @@ Testing
 - add pricing page
 - fix header buttons and functionality
 - Make the my form section auto update after the new form has been created
+- Sidebar for dashboard
