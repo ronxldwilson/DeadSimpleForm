@@ -4,7 +4,6 @@
 - make sure that when the user deletes their account, their data gets deleted as well
 - edit form metadata, name of the form
 - setup backend for pricing page
--fix sign in issue when signing in with 
 
 # To Do
 - Payment processor - application submitted
@@ -101,3 +100,4 @@ Testing
 - Make the my form section auto update after the new form has been created
 - Sidebar for dashboard
 - Logout functionality (frontend + invalidate Supabase session) 
+- fix sign in issue when signing in for the second time

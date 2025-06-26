@@ -1,11 +1,28 @@
-'use client'
+'use client';
 
-import { Auth } from '@supabase/auth-ui-react'
-import { ThemeSupa } from '@supabase/auth-ui-shared'
-import createSupabaseBrowserClient from '@/lib/supabase-browser'
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { Auth } from '@supabase/auth-ui-react';
+import { ThemeSupa } from '@supabase/auth-ui-shared';
+import createSupabaseBrowserClient from '@/lib/supabase-browser';
 
 export default function LoginPage() {
-  const supabase = createSupabaseBrowserClient()
+  const supabase = createSupabaseBrowserClient();
+  const router = useRouter();
+
+  useEffect(() => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_IN') {
+        router.push('/dashboard'); // or wherever
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [router, supabase]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-white px-4">
@@ -26,9 +43,9 @@ export default function LoginPage() {
         />
 
         <p className="text-xs text-gray-400 text-center mt-6">
-          Don&apos;t have an account yet? Sign up — it&apos;s completely free.
+          Don&apos;t have an account yet? Sign up – it&apos;s completely free.
         </p>
       </div>
     </div>
-  )
+  );
 }
