@@ -1,5 +1,4 @@
 # Priority 0
-- make sure that when the user deletes their account, their data gets deleted as well
 - setup backend for pricing page
 
 
@@ -100,3 +99,4 @@ Testing
 - user can delete a form which is owned by them
     - after user has deleted a form, the respective data should get deleted
 - edit form metadata, name of the form
+- make sure that when the user deletes their account, their data gets deleted as well
