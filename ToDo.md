@@ -1,6 +1,7 @@
 # Priority 0
 - setup backend for pricing page
 
+- search through submissions 
 
 # To Do
 - Payment processor - application submitted
@@ -29,11 +30,6 @@ email notification
 
 submission dashboad
 - filter by form
-- sort by date and other filters
-- search through submissions 
-- delete individual submissions by the owner of the form
-- bulk delete submissions
-- pagination of infinte scroll for submissions
 
 customization 
 - enable/disable form
@@ -100,3 +96,7 @@ Testing
     - after user has deleted a form, the respective data should get deleted
 - edit form metadata, name of the form
 - make sure that when the user deletes their account, their data gets deleted as well
+- sort by date and other filters
+- delete individual submissions by the owner of the form
+- bulk delete submissions
+- pagination of infinte scroll for submissions
