@@ -2,6 +2,7 @@
 - search through submissions 
 - setup backend for pricing page
 
+
 # To Do
 - Payment processor - application submitted - need to complete the site to get api keys
 - fix the login/signup page theme and text font
@@ -12,6 +13,7 @@
 - finalize features page
 - finalize pricing page
 - add forms to take file uploads from users only for premium members
+- add a setting icons to form list - used to disable enable a form, other things like setting a file size limit, and other settings
 
 form managment 
 - 
@@ -20,7 +22,6 @@ web hooks
 - test out current webhooks implementation
 
 email notification
-- Send email to site owner on new submission
 - Custom email templates
 - Add multiple recipients
 - Toggle email notifications per form
@@ -97,3 +98,4 @@ Testing
 - pagination of infinte scroll for submissions
 - Enable server level encryption
 - enable better testing for the form data to see, what all can be stored in the database
+- Send email to form owner on new submission

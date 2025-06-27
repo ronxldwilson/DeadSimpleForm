@@ -1,17 +1,15 @@
-// app/api/forms/submit/[slug]/route.ts
-
-// This API route accepts public form submissions to a specific form identified by its slug.
-// It supports both JSON (`application/json`) and URL-encoded (`application/x-www-form-urlencoded`) content types.
-// The request body is parsed and saved in the 'submissions' table with a reference to the form's ID.
-// If the form has a `webhook_url` configured, the submitted data is also forwarded to that URL via POST request.
-// Returns a success response if the submission is stored (and webhook optionally fired), or an error otherwise.
-
 import { NextResponse } from 'next/server'
 import { createSupabaseServerClient } from '@/lib/supabase-server'
 import type { NextRequest } from 'next/server'
-import { encryptJSON } from '@/lib/crypto' // make sure this exists
+import { encryptJSON } from '@/lib/crypto'
+import supabaseAdmin from '@/lib/supabase-admin'
 
-export async function POST(req: NextRequest, context: { params: Promise<{ slug: string }> }) {
+export async function POST(
+  req: NextRequest,
+  context: { params: Promise<{ slug: string }> }
+) {
+  console.log("[📥] Form submission received")
+
   const { slug } = await context.params
   const supabase = await createSupabaseServerClient()
 
@@ -29,10 +27,10 @@ export async function POST(req: NextRequest, context: { params: Promise<{ slug: 
     return NextResponse.json({ error: 'Unsupported content type' }, { status: 400 })
   }
 
-  // Look up the form by slug
+  // 🔎 Lookup form
   const { data: form, error: formError } = await supabase
     .from('forms')
-    .select('id, webhook_url')
+    .select('id, name, webhook_url, user_id')
     .eq('slug', slug)
     .single()
 
@@ -40,7 +38,7 @@ export async function POST(req: NextRequest, context: { params: Promise<{ slug: 
     return NextResponse.json({ error: 'Form not found' }, { status: 404 })
   }
 
-  // 🔐 Encrypt submission data
+  // 🔐 Encrypt
   let encryptedData: string
   try {
     encryptedData = await encryptJSON(body)
@@ -48,7 +46,7 @@ export async function POST(req: NextRequest, context: { params: Promise<{ slug: 
     return NextResponse.json({ error: 'Encryption failed' }, { status: 500 })
   }
 
-  // Insert encrypted submission into DB
+  // 💾 Store
   const { error: insertError } = await supabase
     .from('submissions')
     .insert([{ form_id: form.id, data: encryptedData }])
@@ -57,18 +55,41 @@ export async function POST(req: NextRequest, context: { params: Promise<{ slug: 
     return NextResponse.json({ error: insertError.message }, { status: 400 })
   }
 
-  // 🔔 Optional: send raw (unencrypted) data to webhook
+  // 🔔 Webhook
   if (form.webhook_url) {
     try {
       await fetch(form.webhook_url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body) // raw data for external systems
+        body: JSON.stringify(body),
       })
     } catch (err) {
-      console.warn('Webhook failed:', err)
+      console.warn('[⚠️] Webhook failed:', err)
     }
   }
+
+  // 📧 Email
+  try {
+    console.log(`[📧] Fetching user email with service role: ${form.user_id}`)
+    const { data: userInfo, error: userError } = await supabaseAdmin.auth.admin.getUserById(form.user_id)
+
+    if (userError || !userInfo?.user?.email) {
+      console.warn('[⚠️] Could not fetch user email:', userError)
+    } else {
+      const email = userInfo.user.email
+      console.log(`[📬] Sending email to ${email}`)
+      const { sendSubmissionEmail } = await import('@/lib/email')
+      await sendSubmissionEmail({
+        to: email,
+        formName: form.name,
+        submissionData: body,
+      })
+      console.log("[✅] Email sent")
+    }
+  } catch (err) {
+    console.error("[❌] Email logic failed:", err)
+  }
+
 
   return NextResponse.json({ success: true })
 }
