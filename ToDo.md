@@ -11,6 +11,7 @@
 - finalize docs page
 - finalize features page
 - finalize pricing page
+- add forms to take file uploads from users only for premium members
 
 form managment 
 - 
@@ -95,3 +96,4 @@ Testing
 - bulk delete submissions
 - pagination of infinte scroll for submissions
 - Enable server level encryption
+- enable better testing for the form data to see, what all can be stored in the database

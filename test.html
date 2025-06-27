@@ -1,13 +1,280 @@
-
 <!DOCTYPE html>
 <html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>DeadSimpleForm Infra Test – Stage 3</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        padding: 2rem;
+        max-width: 600px;
+        margin: auto;
+        background: #f9f9f9;
+      }
+      h1 {
+        text-align: center;
+        color: #333;
+      }
+      form {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        background: white;
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      }
+      label {
+        font-weight: bold;
+      }
+      input,
+      select,
+      textarea {
+        padding: 0.5rem;
+        font-size: 1rem;
+        width: 100%;
+      }
+    </style>
+  </head>
   <body>
-    <h1>Test DeadSimpleForm</h1>
-    <form action="http://localhost:3000/api/forms/submit/form_hVHTknjY" method="POST">
+    <h1>DeadSimpleForm Infra Test – Stage 2</h1>
+
+    <form
+      action="http://localhost:3000/api/forms/submit/form_hVHTknjY"
+      method="POST"
+    >
+      <!-- Basic fields -->
       <input type="text" name="name" placeholder="Your name" required />
       <input type="email" name="email" placeholder="you@example.com" required />
       <textarea name="message" placeholder="Your message"></textarea>
-      <button type="submit">Send</button>
+
+      <!-- Number + date/time -->
+      <input type="number" name="age" placeholder="Your age" />
+      <input type="date" name="birthday" />
+      <input type="time" name="appointment_time" />
+
+      <!-- Checkbox (only appears in data if checked) -->
+      <label
+        ><input type="checkbox" name="subscribe" value="yes" /> Subscribe to
+        newsletter</label
+      >
+
+      <!-- Radio buttons (only one value submitted) -->
+      <p>Gender:</p>
+      <label><input type="radio" name="gender" value="male" /> Male</label>
+      <label><input type="radio" name="gender" value="female" /> Female</label>
+
+      <!-- Dropdown -->
+      <label for="country">Country:</label>
+      <select name="country" id="country">
+        <option value="IN">India</option>
+        <option value="US">United States</option>
+        <option value="UK">United Kingdom</option>
+      </select>
+
+      <!-- Multi-select (same name = multiple values) -->
+      <label for="interests">Interests:</label>
+      <select name="interests" id="interests" multiple>
+        <option value="coding">Coding</option>
+        <option value="music">Music</option>
+        <option value="reading">Reading</option>
+        <option value="sports">Sports</option>
+      </select>
+
+      <!-- Hidden field -->
+      <input type="hidden" name="form_meta" value="infra_test_batch_2" />
+
+      <!-- Password (just to see if it's stored) -->
+      <input type="password" name="password" placeholder="Enter password" />
+
+      <br /><br />
+
+      <!-- Edge case inputs -->
+      <label>
+        Full Name (Unicode test):
+        <input type="text" name="user[name]" value="王小明 🚀" />
+      </label>
+
+      <label>
+        Bio (long text input):
+        <textarea name="user[bio]" rows="5">
+This is a test bio with markdown-like formatting:
+- Item 1
+- Item 2
+**Bold** and _italic_ symbols included.
+      </textarea
+        >
+      </label>
+
+      <!-- Simulating repeated keys for arrays -->
+      <label>Hobbies (check all that apply):</label>
+      <label
+        ><input type="checkbox" name="hobbies" value="reading" /> Reading</label
+      >
+      <label
+        ><input type="checkbox" name="hobbies" value="traveling" />
+        Traveling</label
+      >
+      <label
+        ><input type="checkbox" name="hobbies" value="coding" /> Coding</label
+      >
+      <label
+        ><input type="checkbox" name="hobbies" value="chess" /> Chess</label
+      >
+
+      <!-- Empty string field -->
+      <label>
+        Nickname (optional):
+        <input type="text" name="nickname" value="" />
+      </label>
+
+      <!-- Special characters -->
+      <label>
+        Password (special chars):
+        <input type="password" name="user[password]" value="!@#%&*()_+-=🚨" />
+      </label>
+
+      <!-- camelCase and snake_case fields -->
+      <input type="hidden" name="camelCaseField" value="camel value" />
+      <input type="hidden" name="snake_case_field" value="snake value" />
+
+      <!-- Metadata -->
+      <input type="hidden" name="form_meta" value="infra_test_stage_3" />
+
+      <!-- Stage 4 -->
+
+      <!-- Array-style keys -->
+      <label>Product 1 Name:</label>
+      <input type="text" name="products[0][name]" value="Widget Alpha" />
+      <label>Product 1 Price:</label>
+      <input type="number" name="products[0][price]" value="19.99" />
+
+      <label>Product 2 Name:</label>
+      <input type="text" name="products[1][name]" value="Widget Beta" />
+      <label>Product 2 Price:</label>
+      <input type="number" name="products[1][price]" value="0.0001" />
+
+      <!-- Numeric edge cases -->
+      <input type="hidden" name="zero_test" value="0" />
+      <input type="hidden" name="negative_test" value="-123" />
+      <input type="hidden" name="decimal_test" value="3.14159" />
+
+      <!-- Multiple textareas -->
+      <label>Comment 1:</label>
+      <textarea name="comments">This is the first comment.</textarea>
+
+      <label>Comment 2:</label>
+      <textarea name="comments">
+This is the second comment with 😎 emoji!</textarea
+      >
+
+      <!-- Simulated structured field -->
+      <label>Raw JSON Field (string input):</label>
+      <textarea name="raw_data">{ "foo": "bar", "baz": [1, 2, 3] }</textarea>
+
+      <!-- Field name casing and collisions -->
+      <input type="text" name="camelCaseField" value="camel" />
+      <input type="text" name="CamelCaseField" value="Camel" />
+      <input type="text" name="camelcasefield" value="flat" />
+
+      <!-- Long text + stress -->
+      <label>Story / Blog Content (stress test):</label>
+      <textarea name="blog_post" rows="6">
+      Once upon a time in a database far far away... 🧙‍♂️✨
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vitae dolor tellus.
+      [Repeat this ~10 times if you want to increase load]
+    </textarea
+      >
+
+      <!-- Metadata -->
+      <input type="hidden" name="form_meta" value="infra_test_stage_4" />
+
+      <!-- Stage 5 -->
+      <!-- Deeply nested structure -->
+      <input
+        type="text"
+        name="customer[orders][0][items][0][name]"
+        value="Sprocket"
+      />
+      <input
+        type="number"
+        name="customer[orders][0][items][0][price]"
+        value="999.99"
+      />
+      <input
+        type="number"
+        name="customer[orders][0][items][0][qty]"
+        value="2"
+      />
+      <input
+        type="text"
+        name="customer[orders][0][items][1][name]"
+        value="Washer"
+      />
+      <input
+        type="number"
+        name="customer[orders][0][items][1][qty]"
+        value="50"
+      />
+
+      <!-- Abusive field names (simulate injection) -->
+      <input
+        type="text"
+        name="x'); DROP TABLE submissions;--"
+        value="Nice try"
+      />
+      <input type="text" name="user.email');--" value="injection@example.com" />
+
+      <!-- Unicode edge cases -->
+      <input type="text" name="rtl_test" value="مرحبا بالعالم" />
+      <input type="text" name="unicode_weirdness" value="👨‍👩‍👧‍👦🧠🇯🇵🍣🦄" />
+      <input type="text" name="combined_characters" value="Z̷͑͋̍̈́̓͆̓͐a̸̡͆̂̾͌l̐̏ͣ͝g̎̔̿̍o̓" />
+
+      <!-- Boolean logic test -->
+      <label
+        ><input type="checkbox" name="agree_terms" value="yes" /> I agree to
+        terms</label
+      >
+      <!-- Don't check this   simulate "not checked" -->
+
+      <!-- Very long key + value -->
+      <input
+        type="text"
+        name="loooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong_key"
+        value="a"
+        .repeat(1000)
+      />
+
+      <!-- Duplicate/confusing field names -->
+      <input type="text" name="duplicate" value="first" />
+      <input type="text" name="duplicate" value="second" />
+      <input type="text" name="Duplicate" value="capitalized" />
+      <input type="text" name="duplicate[0]" value="arrayish" />
+      <input type="text" name="duplicate[1]" value="more arrayish" />
+
+      <!-- Metadata -->
+      <input type="hidden" name="form_meta" value="infra_test_stage_5" />
+
+      <!-- Stage 6 -->
+
+      <!-- Generate 100 inputs -->
+      <!-- You could also do this with JS if building locally -->
+      <!-- Here's a block of 20 – just repeat as needed -->
+
+      <!-- Loop copy-paste for test, or generate with JS if you prefer -->
+      <script>
+        for (let i = 1; i <= 100; i++) {
+          const label = document.createElement('label')
+          label.textContent = `Field ${i}`
+          const input = document.createElement('input')
+          input.name = `input_field_${i}`
+          input.value = `Test value ${i}`
+          label.appendChild(input)
+          document.forms[0].appendChild(label)
+        }
+      </script>
+
+      <button type="submit">Submit Test</button>
     </form>
   </body>
 </html>
