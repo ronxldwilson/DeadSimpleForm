@@ -107,7 +107,6 @@ export default function FormDetailPage() {
         }
     }, [supabase, router, params.slug, form, page, searchTerm, PAGE_SIZE]);
 
-
     // Initial load
     useEffect(() => {
         if (params.slug) {
@@ -158,7 +157,10 @@ export default function FormDetailPage() {
             submitted_at: s.submitted_at,
             // ip_address: s.ip_address,
             // user_agent: s.user_agent,
-            ...s.data
+            ...s.data,
+            // Include file URLs in CSV
+            uploaded_files: s.uploaded_files ? 
+                s.uploaded_files.map((f: any) => f.githubUrl).join('; ') : ''
         }))
         const header = Object.keys(flat[0] || {})
         const rows = flat.map((row) =>
@@ -172,6 +174,47 @@ export default function FormDetailPage() {
         a.download = `${form.slug}-submissions.csv`
         a.click()
         URL.revokeObjectURL(url)
+    }
+
+    // Component to render uploaded files
+    function FilesList({ files }: { files: any[] | null }) {
+        if (!files || files.length === 0) {
+            return <span className="text-gray-400 text-xs">No files</span>;
+        }
+
+        return (
+            <div className="space-y-1">
+                {files.map((file, index) => {
+                    // Extract original filename from the stored filename
+                    const originalFilename = file.filename.replace(/^[a-f0-9-]+-/, '');
+                    
+                    return (
+                        <div key={index} className="flex items-center gap-2">
+                            <a
+                                href={file.githubUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-blue-600 hover:text-blue-800 underline text-xs truncate max-w-[150px]"
+                                title={originalFilename}
+                            >
+                                {originalFilename}
+                            </a>
+                            <button
+                                onClick={() => {
+                                    // Copy URL to clipboard
+                                    navigator.clipboard.writeText(file.githubUrl);
+                                    // You could show a toast notification here
+                                }}
+                                className="text-gray-400 hover:text-gray-600 text-xs"
+                                title="Copy URL"
+                            >
+                                📋
+                            </button>
+                        </div>
+                    );
+                })}
+            </div>
+        );
     }
 
     // function downloadExcel() {
@@ -196,11 +239,12 @@ export default function FormDetailPage() {
     }
 
     const headers = submissions?.[0]?.data ? Object.keys(submissions[0].data) : []
+    const hasFiles = submissions.some(s => s.uploaded_files && s.uploaded_files.length > 0)
 
     return (
         <div className="min-h-screen text-black bg-white px-4 py-20 sm:px-6 md:px-8">
             <Sidebar />
-            <div className="max-w-5xl mx-auto space-y-8">
+            <div className="max-w-7xl mx-auto space-y-8">
                 <header>
                     <h1 className="text-2xl font-bold text-black">{form.name}</h1>
                     <p className="text-gray-600 text-sm">
@@ -280,6 +324,9 @@ export default function FormDetailPage() {
                                     {headers.map((key) => (
                                         <th key={key} className="px-4 py-2 capitalize">{key}</th>
                                     ))}
+                                    {hasFiles && (
+                                        <th className="px-4 py-2">Uploaded Files</th>
+                                    )}
                                     <th className="px-4 py-2">Submitted At</th>
                                     <th className="px-4 py-2">Actions</th>
                                 </tr>
@@ -302,6 +349,11 @@ export default function FormDetailPage() {
                                                 {String(sub.data[key] || '')}
                                             </td>
                                         ))}
+                                        {hasFiles && (
+                                            <td className="px-4 py-2">
+                                                <FilesList files={sub.uploaded_files} />
+                                            </td>
+                                        )}
                                         <td className="px-4 py-2">{new Date(sub.submitted_at).toLocaleString()}</td>
                                         <td className="px-4 py-2">
                                             <button

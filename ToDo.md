@@ -2,6 +2,9 @@
 - search through submissions 
 - setup backend for pricing page
 
+- add a setting icons to form list - used to disable enable a form, other things like setting a file size limit, and other settings
+- Add multiple recipients
+
 
 # To Do
 - Payment processor - application submitted - need to complete the site to get api keys
@@ -13,17 +16,14 @@
 - finalize features page
 - finalize pricing page
 - add forms to take file uploads from users only for premium members
-- add a setting icons to form list - used to disable enable a form, other things like setting a file size limit, and other settings
 
 form managment 
 - 
-
 web hooks
-- test out current webhooks implementation
+-
 
 email notification
 - Custom email templates
-- Add multiple recipients
 - Toggle email notifications per form
 - Use custom SMTP (optional)
 
@@ -99,3 +99,4 @@ Testing
 - Enable server level encryption
 - enable better testing for the form data to see, what all can be stored in the database
 - Send email to form owner on new submission
+- test out current webhooks implementation - works perfectly
