@@ -14,7 +14,13 @@ import {
   CheckCircle,
   ArrowRight,
   Copy,
-  ExternalLink
+  ExternalLink,
+  Laptop,
+  Smartphone,
+  Monitor,
+  Users,
+  Building,
+  Briefcase
 } from 'lucide-react';
 
 export default function LandingPage() {
@@ -54,7 +60,7 @@ export default function LandingPage() {
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr from-blue-400/20 to-purple-400/20 rounded-full blur-3xl" />
 
         {/* Hero Section */}
-        <section className="relative pt-20 px-6 md:px-12">
+        <section className="relative pt-20 px-6 md:px-12 py-16">
           <div className="max-w-6xl mx-auto text-center">
             <div className="animate-fade-in-up">
               {/* <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-purple-100 to-blue-100 rounded-full text-sm font-medium text-purple-700 mb-8">
@@ -90,12 +96,79 @@ export default function LandingPage() {
                 </Link>
               </div>
 
+              {/* Trusted By Developers */}
+              <div className="max-w-4xl mx-auto mb-4 mt-16">
+                <p className="text-gray-500 text-sm font-medium uppercase tracking-wider">
+                  Designed for developers who ship
+                </p>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+                  <div className="group bg-white/60 backdrop-blur-sm border border-gray-200/50 rounded-2xl p-6 hover:shadow-lg hover:shadow-purple-500/10 transition-all duration-300">
+                    <div className="flex items-center justify-center mb-3">
+                      <div className="p-3 bg-gradient-to-br from-purple-100 to-blue-100 rounded-xl group-hover:from-purple-200 group-hover:to-blue-200 transition-all">
+                        <Laptop className="h-6 w-6 text-purple-600" />
+                      </div>
+                    </div>
+                    <h3 className="font-semibold text-gray-900 text-center">Portfolio Sites</h3>
+                    <p className="text-sm text-gray-600 text-center mt-1">Contact forms for personal websites</p>
+                  </div>
+
+                  <div className="group bg-white/60 backdrop-blur-sm border border-gray-200/50 rounded-2xl p-6 hover:shadow-lg hover:shadow-purple-500/10 transition-all duration-300">
+                    <div className="flex items-center justify-center mb-3">
+                      <div className="p-3 bg-gradient-to-br from-purple-100 to-blue-100 rounded-xl group-hover:from-purple-200 group-hover:to-blue-200 transition-all">
+                        <Building className="h-6 w-6 text-purple-600" />
+                      </div>
+                    </div>
+                    <h3 className="font-semibold text-gray-900 text-center">Landing Pages</h3>
+                    <p className="text-sm text-gray-600 text-center mt-1">Lead capture for marketing campaigns</p>
+                  </div>
+
+                  <div className="group bg-white/60 backdrop-blur-sm border border-gray-200/50 rounded-2xl p-6 hover:shadow-lg hover:shadow-purple-500/10 transition-all duration-300">
+                    <div className="flex items-center justify-center mb-3">
+                      <div className="p-3 bg-gradient-to-br from-purple-100 to-blue-100 rounded-xl group-hover:from-purple-200 group-hover:to-blue-200 transition-all">
+                        <Smartphone className="h-6 w-6 text-purple-600" />
+                      </div>
+                    </div>
+                    <h3 className="font-semibold text-gray-900 text-center">Mobile Apps</h3>
+                    <p className="text-sm text-gray-600 text-center mt-1">Feedback forms for app users</p>
+                  </div>
+
+                  <div className="group bg-white/60 backdrop-blur-sm border border-gray-200/50 rounded-2xl p-6 hover:shadow-lg hover:shadow-purple-500/10 transition-all duration-300">
+                    <div className="flex items-center justify-center mb-3">
+                      <div className="p-3 bg-gradient-to-br from-purple-100 to-blue-100 rounded-xl group-hover:from-purple-200 group-hover:to-blue-200 transition-all">
+                        <Monitor className="h-6 w-6 text-purple-600" />
+                      </div>
+                    </div>
+                    <h3 className="font-semibold text-gray-900 text-center">SaaS Products</h3>
+                    <p className="text-sm text-gray-600 text-center mt-1">Support and feature requests</p>
+                  </div>
+
+                  <div className="group bg-white/60 backdrop-blur-sm border border-gray-200/50 rounded-2xl p-6 hover:shadow-lg hover:shadow-purple-500/10 transition-all duration-300">
+                    <div className="flex items-center justify-center mb-3">
+                      <div className="p-3 bg-gradient-to-br from-purple-100 to-blue-100 rounded-xl group-hover:from-purple-200 group-hover:to-blue-200 transition-all">
+                        <Users className="h-6 w-6 text-purple-600" />
+                      </div>
+                    </div>
+                    <h3 className="font-semibold text-gray-900 text-center">Event Sites</h3>
+                    <p className="text-sm text-gray-600 text-center mt-1">Registration and RSVP forms</p>
+                  </div>
+
+                  <div className="group bg-white/60 backdrop-blur-sm border border-gray-200/50 rounded-2xl p-6 hover:shadow-lg hover:shadow-purple-500/10 transition-all duration-300">
+                    <div className="flex items-center justify-center mb-3">
+                      <div className="p-3 bg-gradient-to-br from-purple-100 to-blue-100 rounded-xl group-hover:from-purple-200 group-hover:to-blue-200 transition-all">
+                        <Briefcase className="h-6 w-6 text-purple-600" />
+                      </div>
+                    </div>
+                    <h3 className="font-semibold text-gray-900 text-center">Business Sites</h3>
+                    <p className="text-sm text-gray-600 text-center mt-1">Client inquiries and quotes</p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </section>
 
         {/* How It Works */}
-        <section className="relative px-6 md:px-12">
+        <section className="relative px-6 md:px-12 ">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-4">
               <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
