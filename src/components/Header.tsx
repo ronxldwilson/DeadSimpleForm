@@ -1,104 +1,77 @@
-// app/components/Header.tsx
 "use client";
 
-import Link from "next/link";
-import Image from "next/image";
-import { Menu, X } from "lucide-react";
-import { useState } from "react";
+import Link from 'next/link';
+import { useState } from 'react';
+import { Menu, X, Zap } from 'lucide-react';
 
 export default function Header() {
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
-    <header className="w-full bg-white border-b border-gray-200 shadow-sm text-gray-800">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
-        {/* Logo */}
-        <Link href="/" aria-label="Home">
-          <Image src="/image.png" width={100} height={40} alt="Dead Simple Form Logo" />
-        </Link>
+    <header className="bg-white backdrop-blur-md border-b sticky top-0 z-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-16">
+          {/* Logo */}
+          <Link href="/" className="flex items-center space-x-2 group">
+            <div className="p-2 bg-gradient-to-br from-purple-600 to-blue-600 rounded-lg group-hover:scale-105 transition-transform">
+              <Zap className="h-5 w-5 text-white" />
+            </div>
+            <span className="text-xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+              DeadSimpleForm
+            </span>
+          </Link>
 
-        {/* Desktop Nav */}
-        <nav className="space-x-6 hidden md:flex">
-          <Link href="/features" className="text-gray-700 hover:text-blue-600 transition-colors">
-            Features
-          </Link>
-          <Link href="/docs" className="text-gray-700 hover:text-blue-600 transition-colors">
-            Docs
-          </Link>
-          <Link href="/pricing" className="text-gray-700 hover:text-blue-600 transition-colors">
-            Pricing
-          </Link>
-        </nav>
-
-        {/* Desktop Auth Buttons */}
-        <div className="space-x-4 hidden md:flex">
-          <Link
-            href="/login"
-            className="text-sm px-4 py-2 rounded-md text-white bg-black transition-colors"
-          >
-            Get Started
-          </Link>
-          <Link
-            href="/signup"
-            className="text-sm px-4 py-2 rounded-md bg-black text-white hover:bg-blue-700 transition-colors"
-          >
-            Sign Up
-          </Link>
-        </div>
-
-        {/* Mobile menu toggle */}
-        <button
-          className="md:hidden text-gray-700"
-          onClick={() => setMobileOpen(!mobileOpen)}
-          aria-label="Toggle menu"
-        >
-          {mobileOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
-      </div>
-
-      {/* Mobile Menu */}
-      {mobileOpen && (
-        <div className="md:hidden px-4 pb-4">
-          <nav className="space-y-2">
-            <Link
-              href="/features"
-              className="block text-gray-700 hover:text-blue-600 transition-colors"
-              onClick={() => setMobileOpen(false)}
-            >
-              Features
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center space-x-8">
+            <Link href="/docs" className="text-gray-700 hover:text-purple-600 transition-colors font-medium">
+              Documentation
             </Link>
-            <Link
-              href="/docs"
-              className="block text-gray-700 hover:text-blue-600 transition-colors"
-              onClick={() => setMobileOpen(false)}
-            >
-              Docs
-            </Link>
-            <Link
-              href="/pricing"
-              className="block text-gray-700 hover:text-blue-600 transition-colors"
-              onClick={() => setMobileOpen(false)}
-            >
+            <Link href="/pricing" className="text-gray-700 hover:text-purple-600 transition-colors font-medium">
               Pricing
             </Link>
-            <hr className="my-2 border-gray-200" />
-            <Link
-              href="/login"
-              className="block text-sm px-4 py-2 text-gray-700 hover:text-blue-600 transition-colors"
-              onClick={() => setMobileOpen(false)}
+            <Link href="/examples" className="text-gray-700 hover:text-purple-600 transition-colors font-medium">
+              Examples
+            </Link>
+            <Link 
+              href="/dashboard" 
+              className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-2 rounded-lg hover:shadow-lg hover:scale-105 transition-all font-medium"
             >
               Get Started
             </Link>
-            <Link
-              href="/signup"
-              className="block text-sm px-4 py-2 rounded-md bg-black text-white hover:bg-blue-700 transition-colors"
-              onClick={() => setMobileOpen(false)}
-            >
-              Sign Up
-            </Link>
           </nav>
+
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className="md:hidden p-2 rounded-lg bg-black hover:bg-black transition-colors"
+          >
+            {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          </button>
         </div>
-      )}
+
+        {/* Mobile Menu */}
+        {isMenuOpen && (
+          <div className="md:hidden py-4 border-t border-gray-200 bg-white/95 backdrop-blur-md">
+            <nav className="flex flex-col space-y-3">
+              <Link href="/docs" className="text-gray-700 hover:text-purple-600 transition-colors font-medium px-2 py-1">
+                Documentation
+              </Link>
+              <Link href="/pricing" className="text-gray-700 hover:text-purple-600 transition-colors font-medium px-2 py-1">
+                Pricing
+              </Link>
+              <Link href="/examples" className="text-gray-700 hover:text-purple-600 transition-colors font-medium px-2 py-1">
+                Examples
+              </Link>
+              <Link 
+                href="/dashboard" 
+                className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-2 rounded-lg hover:shadow-lg transition-all font-medium text-center mt-2"
+              >
+                Get Started
+              </Link>
+            </nav>
+          </div>
+        )}
+      </div>
     </header>
   );
 }
