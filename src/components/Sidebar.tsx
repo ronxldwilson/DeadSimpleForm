@@ -19,8 +19,8 @@ const navLinks = [
     icon: LayoutDashboard,
   },
   {
-    href: "/dashboard/submissions",
-    label: "Submissions",
+    href: "/dashboard/analytics",
+    label: "Anlytics",
     icon: FileText,
   },
   {
